@@ -46,23 +46,23 @@ const Simulation = () => {
   });
 
   // 🔥 ML API (SAFE)
-  const fetchMLData = async () => {
-    try {
-      const res = await fetch("http://localhost:8000/ml-predict");
-      const data = await res.json();
+const fetchMLData = async () => {
+  try {
+    const res = await fetch("https://smart-traffic-ai-nqno.onrender.com/ml-predict");
+    const data = await res.json();
 
-      setTraffic({
-        north: data.north,
-        south: data.south,
-        east: data.east,
-        west: data.west,
-      });
+    setTraffic({
+      north: data.north,
+      south: data.south,
+      east: data.east,
+      west: data.west,
+    });
 
-      setReason(data.reason);
-    } catch (err) {
-      console.log("ML API not running → using simulation");
-    }
-  };
+    setReason(data.reason);
+  } catch (err) {
+    console.log("ML API not running → using simulation");
+  }
+};
 
   const generateTraffic = (prev) => {
     const updated = {};
@@ -126,7 +126,7 @@ const Simulation = () => {
 
       setSignalState("yellow");
       setTimeout(() => setSignalState("green"), 800);
-      setTimer(10);
+      
 
     }, 3000);
 
@@ -201,15 +201,29 @@ const Simulation = () => {
         ))}
       </div>
 
-      {/* TRAFFIC CARDS */}
-      <div className="mt-6 grid grid-cols-2 gap-4">
-        {Object.entries(traffic).map(([dir, val]) => (
-          <div key={dir} className="bg-white/5 backdrop-blur-lg p-4 rounded-xl shadow hover:scale-105 transition">
-            <p>{dir.toUpperCase()}</p>
-            <p className="text-green-400 text-xl">{val}</p>
-          </div>
-        ))}
+{/* TRAFFIC CARDS */}
+<div className="mt-6 grid grid-cols-2 gap-4">
+  {Object.entries(traffic).map(([dir, val]) => {
+    const laneInfo = {
+      north: { name: "North", arrow: "⬆️" },
+      south: { name: "South", arrow: "⬇️" },
+      east: { name: "East", arrow: "➡️" },
+      west: { name: "West", arrow: "⬅️" },
+    };
+
+    return (
+      <div
+        key={dir}
+        className="bg-white/5 backdrop-blur-lg p-4 rounded-xl shadow hover:scale-105 transition text-center"
+      >
+        <p className="text-lg font-semibold text-blue-400">
+          {laneInfo[dir].arrow} {laneInfo[dir].name} Lane
+        </p>
+        <p className="text-green-400 text-xl">{val} vehicles</p>
       </div>
+    );
+  })}
+</div>
 
       {/* AI */}
       <div className="mt-6 bg-white/5 backdrop-blur-lg p-5 rounded-xl text-center w-[320px] shadow-lg border border-white/10">
@@ -269,6 +283,7 @@ const Simulation = () => {
 
     </div>
   );
+  
 };
 
 export default Simulation;
